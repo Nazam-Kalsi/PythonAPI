@@ -23,47 +23,60 @@ nltk.download('maxent_ne_chunker')
 nltk.download('words')
 nltk.download('punkt')
 
+class handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+             self.send_response(200)
+             self.send_header('Content-type', 'text/plain')
+             self.end_headers()
+            #  self.predict_section_and_punishment(user_input)
 # Load existing data
-existing_data = pd.read_csv('api/ipc_sections.csv')
+        existing_data = pd.read_csv('api/ipc_sections.csv')
 
 # Function to extract entities
-def extract_entities_nltk(text):
-    words = word_tokenize(text)
-    tagged = pos_tag(words)
-    entities = ne_chunk(tagged)
-    return ' '.join([entity[0] for entity in entities if isinstance(entity, tuple)])
+        def extract_entities_nltk(text):
+            words = word_tokenize(text)
+            tagged = pos_tag(words)
+            entities = ne_chunk(tagged)
+            return ' '.join([entity[0] for entity in entities if isinstance(entity, tuple)])
 
-# Apply entity extraction to the existing data
-existing_data['Entities'] = existing_data['Offense'].apply(extract_entities_nltk)
+            # Apply entity extraction to the existing data
+            existing_data['Entities'] = existing_data['Offense'].apply(extract_entities_nltk)
 
-# Flatten the data
-flattened_data = existing_data[['Section', 'Punishment', 'Entities']].explode('Entities')
+            # Flatten the data
+            flattened_data = existing_data[['Section', 'Punishment', 'Entities']].explode('Entities')
 
-# Label encode the sections
-label_encoder = LabelEncoder()
-flattened_data['Section_Label'] = label_encoder.fit_transform(flattened_data['Section'])
+            # Label encode the sections
+            label_encoder = LabelEncoder()
+            flattened_data['Section_Label'] = label_encoder.fit_transform(flattened_data['Section'])
 
 
 
-tfidf_vectorizer = TfidfVectorizer(lowercase=True)
-tfidf_matrix = tfidf_vectorizer.fit_transform(flattened_data['Entities'])
+            tfidf_vectorizer = TfidfVectorizer(lowercase=True)
+            tfidf_matrix = tfidf_vectorizer.fit_transform(flattened_data['Entities'])
 
-classifier = SVC(kernel='linear')
-classifier.fit(tfidf_matrix, flattened_data['Section_Label'])
+            classifier = SVC(kernel='linear')
+            classifier.fit(tfidf_matrix, flattened_data['Section_Label'])
 
-def predict_section_and_punishment(user_input):
-    user_entities = extract_entities_nltk(user_input)
+            def predict_section_and_punishment(user_input):
+                user_entities = extract_entities_nltk(user_input)
 
-    if isinstance(user_entities, str):
-        user_entities = [user_entities]
+                if isinstance(user_entities, str):
+                    user_entities = [user_entities]
 
-    user_tfidf = tfidf_vectorizer.transform(user_entities)
-    predicted_label = classifier.predict(user_tfidf)
+                user_tfidf = tfidf_vectorizer.transform(user_entities)
+                predicted_label = classifier.predict(user_tfidf)
 
-    predicted_section = label_encoder.inverse_transform(predicted_label)
-    punishment = existing_data[existing_data['Section'] == predicted_section[0]]['Punishment'].iloc[0]
+                predicted_section = label_encoder.inverse_transform(predicted_label)
+                punishment = existing_data[existing_data['Section'] == predicted_section[0]]['Punishment'].iloc[0]
 
-    return predicted_section[0], punishment
+                return predicted_section[0], punishment
+            #     data= predicted_section[0], punishment
+            #     data = json.dumps(data, ensure_ascii = False)
+		    #     json_value = json.dumps(data, ensure_ascii = False)
+		    #    result = json.loads(json_value)
+		    #     self.wfile.write(result.encode('utf8'))
+		    #     return            
+               
 
 # @app.route('/predict_section_and_punishment', methods=['POST'])
 # def predict_endpoint():
@@ -78,9 +91,9 @@ def predict_section_and_punishment(user_input):
 #     app.run(debug=True)
 
 
-    class handler(BaseHTTPRequestHandler):
-        def do_GET(self):
-             self.send_response(200)
-             self.send_header('Content-type', 'text/plain')
-             self.end_headers()
-             self.predict_section_and_punishment(user_input)
+    # class handler(BaseHTTPRequestHandler):
+    #     def do_GET(self):
+    #          self.send_response(200)
+    #          self.send_header('Content-type', 'text/plain')
+    #          self.end_headers()
+    #          self.predict_section_and_punishment(user_input)
