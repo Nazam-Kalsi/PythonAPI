@@ -1,14 +1,15 @@
 {
-  "name": "vercel-python-api",
+  "name": "pythonapi",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "license": "MIT",
   "scripts": {
-    "start": "vercel dev",
-    "deploy": "vercel deploy --prod"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "vercel": "^33.5.2"
+    "vercel": "^33.5.3"
   }
 }
-

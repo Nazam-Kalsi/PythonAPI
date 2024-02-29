@@ -1,3 +1,6 @@
+from http.server import BaseHTTPRequestHandler
+
+
 from flask import Flask, request, jsonify
 import spacy
 import pandas as pd
@@ -11,8 +14,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)
+# app = Flask(__name__)
+# CORS(app)
 
 # Load Spacy model
 nltk.download('averaged_perceptron_tagger')
@@ -21,7 +24,7 @@ nltk.download('words')
 nltk.download('punkt')
 
 # Load existing data
-existing_data = pd.read_csv('ipc_sections.csv')
+existing_data = pd.read_csv('api/ipc_sections.csv')
 
 # Function to extract entities
 def extract_entities_nltk(text):
@@ -62,14 +65,22 @@ def predict_section_and_punishment(user_input):
 
     return predicted_section[0], punishment
 
-@app.route('/predict_section_and_punishment', methods=['POST'])
-def predict_endpoint():
-    try:
-        user_input = request.json['userInput']
-        section, punishment = predict_section_and_punishment(user_input)
-        return jsonify({'result1': section, 'result2': punishment})
-    except Exception as e:
-        return jsonify({'error': str(e)})
+# @app.route('/predict_section_and_punishment', methods=['POST'])
+# def predict_endpoint():
+#     try:
+#         user_input = request.json['userInput']
+#         section, punishment = predict_section_and_punishment(user_input)
+#         return jsonify({'result1': section, 'result2': punishment})
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
+    class handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+             self.send_response(200)
+             self.send_header('Content-type', 'text/plain')
+             self.end_headers()
+             self.predict_section_and_punishment(user_input)
