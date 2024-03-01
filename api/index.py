@@ -83,7 +83,7 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         s = self.path
         dic = dict(parse.parse_qsl(parse.urlsplit(s).query))
-        self.send_header('Content-type', 'application/json')
+        self.send_header('Content-type', 'text/plain')
         self.end_headers()
         if "userInput" in dic:
             userInput =dic[userInput]
