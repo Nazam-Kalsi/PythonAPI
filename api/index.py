@@ -87,8 +87,10 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         if "userInput" in dic:
             userInput =dic[userInput]
+        else:
+            userInput="I am writing to report an attempted murder incident that occurred on December 10, 2023, at 11:00 PM, in [Location]. The victim, Mr. Ranveer Kumar, narrowly escaped harm during this event. I urgently seek your attention to this matter for a swift investigation.'"
         self.wfile.write(predict_section_and_punishment(userInput).encode())
-        # return
+        return
 
 # %%
 # user_input = '''I am writing to report an attempted murder incident that occurred on December 10, 2023, at 11:00 PM, in [Location]. The victim, Mr. Ranveer Kumar, narrowly escaped harm during this event. I urgently seek your attention to this matter for a swift investigation.'''
