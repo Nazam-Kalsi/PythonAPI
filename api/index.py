@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler
+from urllib import parse
 import spacy
 import pandas as pd
 import numpy as np
@@ -10,6 +11,8 @@ from sklearn.svm import SVC
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        s = self.path
+        dic = dict(parse.parse_qsl(parse.urlsplit(s).query))
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
@@ -46,7 +49,10 @@ class handler(BaseHTTPRequestHandler):
             return predicted_section[0], punishment
             # return predicted_section[0]
             # return {'User Input':'predicted_section[0]'}
-        user_input = '''I am writing to report an attempted murder incident that occurred on December 10, 2023, at 11:00 PM, in [Location]. The victim, Mr. Ram Kumar, narrowly escaped harm during this event. I urgently seek your attention to this matter for a swift investigation.'''
+        if "User Input" in dic: 
+            user_input=dic["User Input"]
+        else:
+            user_input = '''I am writing to report an attempted murder incident that occurred on December 10, 2023, at 11:00 PM, in [Location]. The victim, Mr. Ram Kumar, narrowly escaped harm during this event. I urgently seek your attention to this matter for a swift investigation.'''
         section, punishment = predict_section_and_punishment(user_input)
         # if section and punishment:
         #     print(f"User Input: {user_input}")
