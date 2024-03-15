@@ -49,8 +49,8 @@ class handler(BaseHTTPRequestHandler):
             return predicted_section[0], punishment
             # return predicted_section[0]
             # return {'User Input':'predicted_section[0]'}
-        if "User Input" in dic: 
-            user_input=dic["User Input"]
+        if "userInput" in dic: 
+            user_input=dic["userInput"]
         else:
             user_input = '''I am writing to report an attempted murder incident that occurred on December 10, 2023, at 11:00 PM, in [Location]. The victim, Mr. Ram Kumar, narrowly escaped harm during this event. I urgently seek your attention to this matter for a swift investigation.'''
         section, punishment = predict_section_and_punishment(user_input)
