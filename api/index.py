@@ -1,9 +1,9 @@
 from http.server import BaseHTTPRequestHandler
 import spacy
 import pandas as pd
-import numpy as np
+# import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+# from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 
